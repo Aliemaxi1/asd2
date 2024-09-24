@@ -7,7 +7,7 @@ using AimsharpWow.API;
 
 namespace AimsharpWow.Modules
 {
-    public class EpichamanEnhancementHekili : Rotation
+    public class ZeTesHekiliEnhancementShaman : Rotation
     {
         //Random Number
         private static readonly Random getrandom = new Random();
@@ -219,6 +219,24 @@ namespace AimsharpWow.Modules
             }
         }
 
+        ///<summary>spell=2825</summary>
+        private static string Thunderstorm_SpellName(string Language = "English")
+        {
+            switch (Language)
+            {
+                case "English": return "Thunderstorm";
+                case "Deutsch": return "Kampfrausch";
+                case "Español": return "Ansia de sangre";
+                case "Français": return "Furie sanguinaire";
+                case "Italiano": return "Brama di Sangue";
+                case "Português Brasileiro": return "Sede de Sangue";
+                case "Русский": return "Жажда крови";
+                case "한국어": return "피의 욕망";
+                case "简体中文": return "嗜血";
+                default: return "Thunderstorm";
+            }
+        }
+        
         ///<summary>spell=255654</summary>
         private static string BullRush_SpellName(string Language = "English")
         {
@@ -633,24 +651,6 @@ namespace AimsharpWow.Modules
             }
         }
 
-        ///<summary>spell=378773</summary>
-        private static string GreaterPurge_SpellName(string Language = "English")
-        {
-            switch (Language)
-            {
-                case "English": return "Greater Purge";
-                case "Deutsch": return "Großes Reinigen";
-                case "Español": return "Purgar superior";
-                case "Français": return "Purge supérieure";
-                case "Italiano": return "Epurazione Superiore";
-                case "Português Brasileiro": return "Expurgo Maior";
-                case "Русский": return "Великое очищение";
-                case "한국어": return "상급 정화";
-                case "简体中文": return "强效净化术";
-                default: return "Greater Purge";
-            }
-        }
-
         ///<summary>spell=5394</summary>
         private static string HealingStreamTotem_SpellName(string Language = "English")
         {
@@ -954,24 +954,6 @@ namespace AimsharpWow.Modules
                 case "한국어": return "태고의 파도";
                 case "简体中文": return "始源之潮";
                 default: return "Primordial Wave";
-            }
-        }
-
-        ///<summary>spell=370</summary>
-        private static string Purge_SpellName(string Language = "English")
-        {
-            switch (Language)
-            {
-                case "English": return "Purge";
-                case "Deutsch": return "Reinigen";
-                case "Español": return "Purgar";
-                case "Français": return "Purge";
-                case "Italiano": return "Epurazione";
-                case "Português Brasileiro": return "Expurgar";
-                case "Русский": return "Развеивание магии";
-                case "한국어": return "정화";
-                case "简体中文": return "净化术";
-                default: return "Purge";
             }
         }
 
@@ -1483,8 +1465,6 @@ namespace AimsharpWow.Modules
             Macros.Add("EarthElementalOff", "/" + FiveLetters + " EarthElemental");
             Macros.Add("TremorTotemOff", "/" + FiveLetters + " TremorTotem");
 
-            Macros.Add("PurgeMO", "/cast [@mouseover,exists] " + Purge_SpellName(Language));
-
         }
 
         private void InitializeSpells()
@@ -1508,8 +1488,6 @@ namespace AimsharpWow.Modules
         private void InitializeCustomLUAFunctions()
         {
             CustomFunctions.Add("HekiliID1", "local loading, finished = IsAddOnLoaded(\"Hekili\")\nif loading == true and finished == true then\n\tlocal id=Hekili.DisplayPool.Primary.Recommendations[1].actionID\n\tif id ~= nil then\n\t\tif id<0 then\n\t\t\tlocal spell = Hekili.Class.abilities[id]\n\t\t\tif spell ~= nil and spell.item ~= nil then\n\t\t\t\tid=spell.item\n\t\t\t\tlocal topTrinketLink = GetInventoryItemLink(\"player\",13)\n\t\t\t\tlocal bottomTrinketLink = GetInventoryItemLink(\"player\",14)\n\t\t\t\tlocal weaponLink = GetInventoryItemLink(\"player\",16)\n\t\t\t\tif topTrinketLink  ~= nil then\n\t\t\t\t\tlocal trinketid = GetItemInfoInstant(topTrinketLink)\n\t\t\t\t\tif trinketid ~= nil then\n\t\t\t\t\t\tif trinketid == id then\n\t\t\t\t\t\t\treturn 1\n\t\t\t\t\t\tend\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\t\tif bottomTrinketLink ~= nil then\n\t\t\t\t\tlocal trinketid = GetItemInfoInstant(bottomTrinketLink)\n\t\t\t\t\tif trinketid ~= nil then\n\t\t\t\t\t\tif trinketid == id then\n\t\t\t\t\t\t\treturn 2\n\t\t\t\t\t\tend\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\t\tif weaponLink ~= nil then\n\t\t\t\t\tlocal weaponid = GetItemInfoInstant(weaponLink)\n\t\t\t\t\tif weaponid ~= nil then\n\t\t\t\t\t\tif weaponid == id then\n\t\t\t\t\t\t\treturn 3\n\t\t\t\t\t\tend\n\t\t\t\t\tend\n\t\t\t\tend\n\t\t\tend\n\t\tend\n\t\treturn id\n\tend\nend\nreturn 0");
-
-            CustomFunctions.Add("PhialCount", "local count = GetItemCount(177278) if count ~= nil then return count end return 0");
 
             CustomFunctions.Add("GetSpellQueueWindow", "local sqw = GetCVar(\"SpellQueueWindow\"); if sqw ~= nil then return tonumber(sqw); end return 0");
 
@@ -1549,9 +1527,6 @@ namespace AimsharpWow.Modules
             "\nif UnitExists('focus') and UnitIsUnit('party4','focus') then foc = 4; end" +
             "\nif UnitExists('focus') and UnitIsUnit('player','focus') then foc = 5; end" +
             "\nreturn foc");
-
-            CustomFunctions.Add("PurgeCheckMouseover", "local markcheck = 0; if UnitExists('mouseover') and UnitIsDead('mouseover') ~= true and UnitAffectingCombat('mouseover') and IsSpellInRange('Purge','mouseover') == 1 then markcheck = markcheck +1  for y = 1, 40 do local name,_,_,debuffType,_,_,_  = UnitBuff('mouseover', y) if debuffType == 'Magic' then markcheck = markcheck + 2 end end return markcheck end return 0");
-
         }
         #endregion
 
@@ -1571,25 +1546,22 @@ namespace AimsharpWow.Modules
                 "한국어",
                 "简体中文"
             }, "English"));
-            Settings.Add(new Setting(""));
+            Settings.Add(new Setting("-------------Einstellungen------------------------"));
             Settings.Add(new Setting("Race:", m_RaceList, "orc"));
             Settings.Add(new Setting("Ingame World Latency:", 1, 200, 50));
             Settings.Add(new Setting(" "));
             Settings.Add(new Setting("Use Trinkets on CD, dont wait for Hekili:", false));
-            Settings.Add(new Setting("Auto Healthstone @ HP%", 0, 100, 25));
+            Settings.Add(new Setting("Auto Healthstone @ HP%", 0, 100, 1));
             Settings.Add(new Setting("Item Use:", ""));
             Settings.Add(new Setting("Auto Item @ HP%", 0, 100, 35));
-            Settings.Add(new Setting("Auto Phial of Serenity @ HP%", 0, 100, 35));
-            Settings.Add(new Setting("Kicks/Interrupts"));
+            Settings.Add(new Setting("-----------Kicks/Interrupts------------------------"));
             Settings.Add(new Setting("Randomize Kicks:", false));
             Settings.Add(new Setting("Kick at milliseconds remaining", 50, 1500, 500));
             Settings.Add(new Setting("Kick channels after milliseconds", 50, 1500, 500));
-            Settings.Add(new Setting("General"));
+            Settings.Add(new Setting("-----------------General---------------------------"));
             Settings.Add(new Setting("Auto Start Combat:", true));
             Settings.Add(new Setting("Weapon Imbue Out of Combat:", true));
             Settings.Add(new Setting("Lightning Shield Out of Combat:", true));
-            //Settings.Add(new Setting("Auto Purge Target:", true));
-            Settings.Add(new Setting("Auto Purge Mouseover:", true));
             Settings.Add(new Setting("Auto Astral Shift @ HP%", 0, 100, 25));
             Settings.Add(new Setting("Auto Ancestral Guidance @ HP%", 0, 100, 25));
             Settings.Add(new Setting("Auto Healing Surge @ HP%", 0, 100, 40));
@@ -1613,14 +1585,12 @@ namespace AimsharpWow.Modules
             Aimsharp.QuickDelay = 50;
             Aimsharp.SlowDelay = 150;
 
-            Aimsharp.PrintMessage("Epic PVE - Shaman Enhancement", Color.White);
-            Aimsharp.PrintMessage("This rotation requires the Hekili Addon !", Color.White);
-            Aimsharp.PrintMessage("Hekili > Toggles > Unbind everything in every tab there, especially Pause !", Color.White);
-            Aimsharp.PrintMessage("-----", Color.Black);
-            Aimsharp.PrintMessage("- Talents -", Color.White);
-            Aimsharp.PrintMessage("Wowhead: https://www.wowhead.com/guide/classes/shaman/enhancement/overview-pve-dps", Color.Yellow);
-            Aimsharp.PrintMessage("-----", Color.Black);
-            Aimsharp.PrintMessage("- General -", Color.White);
+            Aimsharp.PrintMessage("ZeTeS - Hekili Enchancment Rotation", Color.White);
+            Aimsharp.PrintMessage("This rotation requires the Hekili Addon !", Color.Red);
+            Aimsharp.PrintMessage("------------------------------------------------------", Color.Black);
+            Aimsharp.PrintMessage("---------------------- Talents -----------------------", Color.White);
+            Aimsharp.PrintMessage("------------------------------------------------------", Color.Black);
+            Aimsharp.PrintMessage("---------------------- General -----------------------", Color.White);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoInterrupts - Disables Interrupts", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoCycle - Disables Target Cycle", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoDecurse - Disables Decurse", Color.Yellow);
@@ -1632,7 +1602,7 @@ namespace AimsharpWow.Modules
             Aimsharp.PrintMessage("/" + FiveLetters + " EarthElemental - Casts Earth Elemental @ next GCD", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " VesperTotem - Casts Vesper Totem @ next GCD", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " FaeTransfusion - Casts Fae Transfusion @ next GCD", Color.Yellow);
-            Aimsharp.PrintMessage("-----", Color.Black);
+            Aimsharp.PrintMessage("-------------------------------------------------------", Color.Black);
 
             Language = GetDropDown("Game Client Language");
             UsableItem = GetString("Item Use:");
@@ -1751,7 +1721,6 @@ namespace AimsharpWow.Modules
                 FlametongueWeapon_SpellName(Language), //318038
                 FrostShock_SpellName(Language), //196840
                 GhostWolf_SpellName(Language), //2645
-                GreaterPurge_SpellName(Language), //378773
                 HealingStreamTotem_SpellName(Language), //5394
                 HealingSurge_SpellName(Language), //8004
                 Heroism_SpellName(Language), //32182
@@ -1761,7 +1730,6 @@ namespace AimsharpWow.Modules
                 LightningShield_SpellName(Language), //192106
                 NaturesSwiftness_SpellName(Language), //378081
                 PrimalStrike_SpellName(Language), //73899
-                Purge_SpellName(Language), //370
                 TremorTotem_SpellName(Language), //8143
 
                 //Enhancement
@@ -1931,6 +1899,90 @@ namespace AimsharpWow.Modules
                     }
                 }
             }
+            
+            //Thunderstorm Knockup
+            if (!NoInterrupts && (Aimsharp.UnitID("target") != 168105 || Torghast_InnerFlame.Contains(Aimsharp.CastingID("target"))) && (Aimsharp.UnitID("target") != 157571 || Torghast_InnerFlame.Contains(Aimsharp.CastingID("target"))))
+            {
+                int KickValueRandom;
+                int KickChannelsAfterRandom;
+                if (GetCheckBox("Randomize Kicks:"))
+                {
+                    KickValueRandom = KickValue + GetRandomNumber(200, 500);
+                    KickChannelsAfterRandom = KickChannelsAfter + GetRandomNumber(200, 500);
+                }
+                else
+                {
+                    KickValueRandom = KickValue;
+                    KickChannelsAfterRandom = KickChannelsAfter;
+                }
+                if (CanCastCheck(Thunderstorm_SpellName(Language), "target", true, true))
+                {
+                    if (IsInterruptable && !IsChanneling && CastingRemaining < KickValueRandom)
+                    {
+                        if (Debug)
+                        {
+                            Aimsharp.PrintMessage("Target Casting ID: " + Aimsharp.CastingID("target") + ", Interrupting", Color.Purple);
+                        }
+                        Aimsharp.Cast(Thunderstorm_SpellName(Language), true);
+                        return true;
+                    }
+                }
+
+                if (CanCastCheck(Thunderstorm_SpellName(Language), "target", true, true))
+                {
+                    if (IsInterruptable && IsChanneling && CastingElapsed > KickChannelsAfterRandom)
+                    {
+                        if (Debug)
+                        {
+                            Aimsharp.PrintMessage("Target Channeling ID: " + Aimsharp.CastingID("target") + ", Interrupting", Color.Purple);
+                        }
+                        Aimsharp.Cast(Thunderstorm_SpellName(Language), true);
+                        return true;
+                    }
+                }
+            }
+
+            //CapaciterTotem
+            if (!NoInterrupts && (Aimsharp.UnitID("target") != 168105 || Torghast_InnerFlame.Contains(Aimsharp.CastingID("target"))) && (Aimsharp.UnitID("target") != 157571 || Torghast_InnerFlame.Contains(Aimsharp.CastingID("target"))))
+            {
+                int KickValueRandom;
+                int KickChannelsAfterRandom;
+                if (GetCheckBox("Randomize Kicks:"))
+                {
+                    KickValueRandom = KickValue + GetRandomNumber(200, 500);
+                    KickChannelsAfterRandom = KickChannelsAfter + GetRandomNumber(200, 500);
+                }
+                else
+                {
+                    KickValueRandom = KickValue;
+                    KickChannelsAfterRandom = KickChannelsAfter;
+                }
+                if (CanCastCheck(CapacitorTotem_SpellName(Language), "target", true, true))
+                {
+                    if (IsInterruptable && !IsChanneling && CastingRemaining < KickValueRandom)
+                    {
+                        if (Debug)
+                        {
+                            Aimsharp.PrintMessage("Target Casting ID: " + Aimsharp.CastingID("target") + ", Interrupting", Color.Purple);
+                        }
+                        Aimsharp.Cast(CapacitorTotem_SpellName(Language), true);
+                        return true;
+                    }
+                }
+
+                if (CanCastCheck(CapacitorTotem_SpellName(Language), "target", true, true))
+                {
+                    if (IsInterruptable && IsChanneling && CastingElapsed > KickChannelsAfterRandom)
+                    {
+                        if (Debug)
+                        {
+                            Aimsharp.PrintMessage("Target Channeling ID: " + Aimsharp.CastingID("target") + ", Interrupting", Color.Purple);
+                        }
+                        Aimsharp.Cast(CapacitorTotem_SpellName(Language), true);
+                        return true;
+                    }
+                }
+            }
             #endregion
 
             #region Auto Spells and Items
@@ -2003,63 +2055,18 @@ namespace AimsharpWow.Modules
                 }
             }
 
-            //Auto Purge Mouseover
-            if (Aimsharp.CanCast(Purge_SpellName(Language), "mouseover", true, true))
-            {
-                if (GetCheckBox("Auto Purge Mouseover:") && Aimsharp.CustomFunction("PurgeCheckMouseover") == 3)
-                {
-                    Aimsharp.Cast("PurgeMO");
-                    if (Debug)
-                    {
-                        Aimsharp.PrintMessage("Casting Purge on Mouseover", Color.Purple);
-                    }
-                    return true;
-                }
-            }
-
             #region Maelstrom Healing Surge
+            
             if (UnitBelowThreshold(GetSlider("Auto Healing Surge @ HP%")) && Aimsharp.BuffStacks(MaelstromWeapon_SpellName(Language), "player", true) >= 5)
             {
-                PartyDict.Clear();
-                PartyDict.Add("player", Aimsharp.Health("player"));
-
-                var partysize = Aimsharp.GroupSize();
-                if (partysize <= 5)
+                if (Debug)
                 {
-                    for (int i = 1; i < partysize; i++)
-                    {
-                        var partyunit = ("party" + i);
-                        if (Aimsharp.Health(partyunit) > 0 && Aimsharp.SpellInRange(CleanseSpirit_SpellName(Language),partyunit))
-                        {
-                            PartyDict.Add(partyunit, Aimsharp.Health(partyunit));
-                        }
-                    }
+                    Aimsharp.PrintMessage("Casting Healing Surge Cause of HP Treshold", Color.Purple);
                 }
-
-                foreach (var unit in PartyDict.OrderBy(unit => unit.Value))
-                {
-                    if (Aimsharp.CanCast(HealingSurge_SpellName(Language), unit.Key, false, true) && (unit.Key == "player" || Aimsharp.SpellInRange(CleanseSpirit_SpellName(Language),unit.Key)) && Aimsharp.Health(unit.Key) <= GetSlider("Auto Healing Surge @ HP%"))
-                    {
-                        if (!UnitFocus(unit.Key))
-                        {
-                            Aimsharp.Cast("FOC_" + unit.Key, true);
-                            return true;
-                        }
-                        else
-                        {
-                            if (UnitFocus(unit.Key))
-                            {
-                                Aimsharp.Cast("HS_FOC");
-                                if (Debug)
-                                {
-                                    Aimsharp.PrintMessage("Healing Surge @ " + unit.Key + " - " + unit.Value, Color.Purple);
-                                }
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
+                Aimsharp.Cast(HealingSurge_SpellName(Language), true);
+                return true;
+             }
+            
             #endregion
 
             #region Healing Totem
@@ -2779,26 +2786,6 @@ namespace AimsharpWow.Modules
                             Aimsharp.PrintMessage("Casting Windfury Weapon - " + SpellID1, Color.Purple);
                         }
                         Aimsharp.Cast(WindfuryWeapon_SpellName(Language));
-                        return true;
-                    }
-
-                    if (SpellID1 == 370 && CanCastCheck(Purge_SpellName(Language), "target", false, true))
-                    {
-                        if (Debug)
-                        {
-                            Aimsharp.PrintMessage("Casting  Purge - " + SpellID1, Color.Purple);
-                        }
-                        Aimsharp.Cast(Purge_SpellName(Language));
-                        return true;
-                    }
-
-                    if (SpellID1 == 378773 && CanCastCheck(GreaterPurge_SpellName(Language), "target", false, true))
-                    {
-                        if (Debug)
-                        {
-                            Aimsharp.PrintMessage("Casting Greater Purge - " + SpellID1, Color.Purple);
-                        }
-                        Aimsharp.Cast(GreaterPurge_SpellName(Language));
                         return true;
                     }
 
