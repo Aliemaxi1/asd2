@@ -1273,7 +1273,7 @@ namespace AimsharpWow.Modules
 
         #region Lists
         //Lists
-        private List<string> m_IngameCommandsList = new List<string> { "NoInterrupts", "NoCycle", "NoDecurse", "EarthbindTotem", "WindRushTotem", "CapacitorTotem", "TremorTotem", "HexMO", "EarthElemental", "VesperTotem", "FaeTransfusion", };
+        private List<string> m_IngameCommandsList = new List<string> { "NoInterrupts", "PartyEmergencyHeal", "NoCycle", "NoDecurse", "EarthbindTotem", "WindRushTotem", "CapacitorTotem", "TremorTotem", "HexMO", "EarthElemental", "VesperTotem", "FaeTransfusion", };
         private List<string> m_DebuffsList;
         private List<string> m_BuffsList;
         private List<string> m_ItemsList;
@@ -1566,6 +1566,10 @@ namespace AimsharpWow.Modules
             Settings.Add(new Setting("Auto Ancestral Guidance @ HP%", 0, 100, 25));
             Settings.Add(new Setting("Auto Healing Surge @ HP%", 0, 100, 40));
             Settings.Add(new Setting("Auto Healing Stream Totem @ HP%", 0, 100, 50));
+            Settings.Add(new Setting("-----------------PARTY-EMERGENCY-HEAL---------------"));
+            Settings.Add(new Setting("Auto Healing Surge Party @ HP%", 0, 100, 15));
+            Settings.Add(new Setting("----------------------------------------------------"));
+            Settings.Add(new Setting("Auto Healing Stream Totem @ HP%", 0, 100, 50));
             Settings.Add(new Setting("Totem Cast:", m_CastingList, "Manual"));
             Settings.Add(new Setting("Covenant Cast:", m_CastingList, "Manual"));
             Settings.Add(new Setting("    "));
@@ -1592,6 +1596,7 @@ namespace AimsharpWow.Modules
             Aimsharp.PrintMessage("------------------------------------------------------", Color.Black);
             Aimsharp.PrintMessage("---------------------- General -----------------------", Color.White);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoInterrupts - Disables Interrupts", Color.Yellow);
+            Aimsharp.PrintMessage("/" + FiveLetters + " PartyEmergencyHeal - Disables PartyEmergencyHeal", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoCycle - Disables Target Cycle", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoDecurse - Disables Decurse", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " HexMO - Casts Hex @ Mouseover next GCD", Color.Yellow);
@@ -1773,6 +1778,7 @@ namespace AimsharpWow.Modules
             int Wait = Aimsharp.CustomFunction("HekiliWait");
 
             bool NoInterrupts = Aimsharp.IsCustomCodeOn("NoInterrupts");
+            bool PartyEmergencyHeal = Aimsharp.IsCustomCodeOn("PartyEmergencyHeal");
             bool NoCycle = Aimsharp.IsCustomCodeOn("NoCycle");
             bool NoDecurse = Aimsharp.IsCustomCodeOn("NoDecurse");
 
@@ -2066,6 +2072,53 @@ namespace AimsharpWow.Modules
                 Aimsharp.Cast(HealingSurge_SpellName(Language), true);
                 return true;
              }
+            
+            #endregion
+
+            #region Maelstrom Healing Sure Party Emergency Heal
+
+            if (!PartyEmergencyHeal && UnitBelowThreshold(GetSlider("Auto Healing Surge Party @ HP%")) && Aimsharp.BuffStacks(MaelstromWeapon_SpellName(Language), "player", true) >= 5)
+            {
+                PartyDict.Clear();
+                PartyDict.Add("player", Aimsharp.Health("player"));
+
+                var partysize = Aimsharp.GroupSize();
+                if (partysize <= 5)
+                {
+                    for (int i = 1; i < partysize; i++)
+                    {
+                        var partyunit = ("party" + i);
+                        if (Aimsharp.Health(partyunit) > 0 && Aimsharp.SpellInRange(CleanseSpirit_SpellName(Language),partyunit))
+                        {
+                            PartyDict.Add(partyunit, Aimsharp.Health(partyunit));
+                        }
+                    }
+                }
+
+                foreach (var unit in PartyDict.OrderBy(unit => unit.Value))
+                {
+                    if (Aimsharp.CanCast(HealingSurge_SpellName(Language), unit.Key, false, true) && (unit.Key == "player" || Aimsharp.SpellInRange(CleanseSpirit_SpellName(Language),unit.Key)) && Aimsharp.Health(unit.Key) <= GetSlider("Auto Healing Surge Party @ HP%"))
+                    {
+                        if (!UnitFocus(unit.Key))
+                        {
+                            Aimsharp.Cast("FOC_" + unit.Key, true);
+                            return true;
+                        }
+                        else
+                        {
+                            if (UnitFocus(unit.Key))
+                            {
+                                Aimsharp.Cast("HS_FOC");
+                                if (Debug)
+                                {
+                                    Aimsharp.PrintMessage("Healing Surge Party Heal @ " + unit.Key + " - " + unit.Value, Color.Purple);
+                                }
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
             
             #endregion
 
