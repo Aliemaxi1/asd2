@@ -309,6 +309,24 @@ namespace AimsharpWow.Modules
             }
         }
 
+        ///<summary>spell=1064</summary>
+        private static string Skyfury_SpellName(string Language = "English")
+        {
+            switch (Language)
+            {
+                case "English": return "Skyfury";
+                case "Deutsch": return "Kettenheilung";
+                case "Español": return "Sanación en cadena";
+                case "Français": return "Salve de guérison";
+                case "Italiano": return "Catena di Guarigione";
+                case "Português Brasileiro": return "Cura Encadeada";
+                case "Русский": return "Цепное исцеление";
+                case "한국어": return "연쇄 치유";
+                case "简体中文": return "治疗链";
+                default: return "Skyfury";
+            }
+        }
+
         ///<summary>spell=188443</summary>
         private static string ChainLightning_SpellName(string Language = "English")
         {
@@ -3036,7 +3054,7 @@ namespace AimsharpWow.Modules
                         return true;
                     }
 
-                    if (SpellID1 == 187874 && CanCastCheck(CrashLightning_SpellName(Language), "player", false, true))
+                    if (SpellID1 == 187874 && CanCastCheck(CrashLightning_SpellName(Language) && EnemiesInMelee > 1, "player", false, true))
                     {
                         if (Debug)
                         {
@@ -3137,7 +3155,6 @@ namespace AimsharpWow.Modules
         {
             #region Declarations
             int SpellID1 = Aimsharp.CustomFunction("HekiliID1");
-            int PhialCount = Aimsharp.CustomFunction("PhialCount");
             bool Debug = GetCheckBox("Debug:") == true;
             bool Moving = Aimsharp.PlayerIsMoving();
             bool Enemy = Aimsharp.TargetIsEnemy();
@@ -3499,6 +3516,16 @@ namespace AimsharpWow.Modules
                     Aimsharp.PrintMessage("Casting Lightning Shield - " + SpellID1, Color.Purple);
                 }
                 Aimsharp.Cast(LightningShield_SpellName(Language));
+                return true;
+            }
+
+            if (SpellID1 == 192106 && CanCastCheck(Skyfury_SpellName(Language), "player", false, true) && Moving)
+            {
+                if (Debug)
+                {
+                    Aimsharp.PrintMessage("Casting Skyfury While Moving- " + SpellID1, Color.Purple);
+                }
+                Aimsharp.Cast(Skyfury_SpellName(Language));
                 return true;
             }
             #endregion
