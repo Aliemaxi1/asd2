@@ -1273,7 +1273,7 @@ namespace AimsharpWow.Modules
 
         #region Lists
         //Lists
-        private List<string> m_IngameCommandsList = new List<string> { "NoInterrupts", "PartyEmergencyHeal", "NoCycle", "NoDecurse", "EarthbindTotem", "WindRushTotem", "CapacitorTotem", "TremorTotem", "HexMO", "EarthElemental", "VesperTotem", "FaeTransfusion", };
+        private List<string> m_IngameCommandsList = new List<string> { "NoInterrupts", "NoPartyEmergencyHeal", "NoCycle", "NoDecurse", "EarthbindTotem", "WindRushTotem", "CapacitorTotem", "TremorTotem", "HexMO", "EarthElemental", "VesperTotem", "FaeTransfusion", };
         private List<string> m_DebuffsList;
         private List<string> m_BuffsList;
         private List<string> m_ItemsList;
@@ -1596,7 +1596,7 @@ namespace AimsharpWow.Modules
             Aimsharp.PrintMessage("------------------------------------------------------", Color.Black);
             Aimsharp.PrintMessage("---------------------- General -----------------------", Color.White);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoInterrupts - Disables Interrupts", Color.Yellow);
-            Aimsharp.PrintMessage("/" + FiveLetters + " PartyEmergencyHeal - Disables PartyEmergencyHeal", Color.Yellow);
+            Aimsharp.PrintMessage("/" + FiveLetters + " NoPartyEmergencyHeal - Disables PartyEmergencyHeal", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoCycle - Disables Target Cycle", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " NoDecurse - Disables Decurse", Color.Yellow);
             Aimsharp.PrintMessage("/" + FiveLetters + " HexMO - Casts Hex @ Mouseover next GCD", Color.Yellow);
@@ -1778,7 +1778,7 @@ namespace AimsharpWow.Modules
             int Wait = Aimsharp.CustomFunction("HekiliWait");
 
             bool NoInterrupts = Aimsharp.IsCustomCodeOn("NoInterrupts");
-            bool PartyEmergencyHeal = Aimsharp.IsCustomCodeOn("PartyEmergencyHeal");
+            bool NoPartyEmergencyHeal = Aimsharp.IsCustomCodeOn("NoPartyEmergencyHeal");
             bool NoCycle = Aimsharp.IsCustomCodeOn("NoCycle");
             bool NoDecurse = Aimsharp.IsCustomCodeOn("NoDecurse");
 
@@ -2077,7 +2077,7 @@ namespace AimsharpWow.Modules
 
             #region Maelstrom Healing Sure Party Emergency Heal
 
-            if (!PartyEmergencyHeal && UnitBelowThreshold(GetSlider("Auto Healing Surge Party @ HP%")) && Aimsharp.BuffStacks(MaelstromWeapon_SpellName(Language), "player", true) >= 5)
+            if (!NoPartyEmergencyHeal && UnitBelowThreshold(GetSlider("Auto Healing Surge Party @ HP%")) && Aimsharp.BuffStacks(MaelstromWeapon_SpellName(Language), "player", true) >= 5)
             {
                 PartyDict.Clear();
                 PartyDict.Add("player", Aimsharp.Health("player"));
