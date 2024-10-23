@@ -18,6 +18,18 @@ private void InitializeCustomLUAFunctions()
         }
         #endregion
 
+/// SpellQUE Window ( get from settings slider ) 
+
+if (Aimsharp.CustomFunction("GetSpellQueueWindow") != (Aimsharp.Latency + 100))
+            {
+                if (Debug)
+                {
+                    Aimsharp.PrintMessage("Setting SQW to: " + Aimsharp.Latency, Color.Purple);
+                }
+                Aimsharp.Cast("SetSpellQueueCvar");
+            }
+
+
 /// Declarations
             #region Declarations
             int SpellID1 = Aimsharp.CustomFunction("HekiliID1");
